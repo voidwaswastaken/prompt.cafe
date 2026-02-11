@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Cafe - AI Prompt Mühendisliği</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --dark: #1e1b4b;
+            --light: #f8fafc;
+            --text: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --header-bg: rgba(255, 255, 255, 0.95);
+            --section-bg: white;
+            --card-bg: #f8fafc;
+            --card-bg-alt: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+        }
+
+        body.dark-mode {
+            --primary: #818cf8;
+            --secondary: #a78bfa;
+            --accent: #f472b6;
+            --text: #e2e8f0;
+            --bg-gradient: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            --header-bg: rgba(30, 27, 75, 0.95);
+            --section-bg: #1e293b;
+            --card-bg: #0f172a;
+            --card-bg-alt: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .lang-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-left: 1rem;
+        }
+
+        .lang-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .theme-btn {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 2px solid var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-left: 1rem;
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 5rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: white;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-btn {
+            background: white;
+            color: var(--primary);
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        section {
+            background: var(--section-bg);
+            margin: 3rem 0;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tip-card {
+            background: var(--card-bg-alt);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 5px solid var(--primary);
+            transition: transform 0.3s, background 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tip-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .analyzer {
+            margin-top: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 3rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .results {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 15px;
+            display: none;
+            transition: background 0.3s ease;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .feedback-item {
+            background: var(--section-bg);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            border-left: 5px solid;
+            transition: background 0.3s ease;
+        }
+
+        .feedback-item.good {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .feedback-item.warning {
+            border-color: var(--warning);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .feedback-item.bad {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .example-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .example-card.bad {
+            border: 3px solid var(--danger);
+        }
+
+        .example-card.good {
+            border: 3px solid var(--success);
+        }
+
+        .badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .badge.bad {
+            background: var(--danger);
+        }
+
+        .badge.good {
+            background: var(--success);
+        }
+
+        .example-text {
+            background: var(--section-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-style: italic;
+            transition: background 0.3s ease;
+        }
+
+        footer {
+            background: var(--header-bg);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-radius: 20px 20px 0 0;
+            transition: background 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">☕ Prompt Cafe</div>
+                <ul class="nav-links">
+                    <li><a href="#home" data-tr="nav-home">Ana Sayfa</a></li>
+                    <li><a href="#guide" data-tr="nav-guide">Rehber</a></li>
+                    <li><a href="#analyzer" data-tr="nav-analyzer">Analiz Et</a></li>
+                    <li><a href="#examples" data-tr="nav-examples">Örnekler</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <button class="theme-btn" onclick="toggleTheme()">🌙 / ☀️</button>
+                    <button class="lang-btn" onclick="toggleLanguage()">EN / TR</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <h1 data-tr="hero-title">Yapay Zeka İle Konuşma Sanatı</h1>
+            <p data-tr="hero-subtitle">Mükemmel promptlar yazarak AI'dan en iyi sonuçları alın</p>
+            <button class="cta-btn" onclick="document.getElementById('analyzer').scrollIntoView({behavior: 'smooth'})" data-tr="hero-cta">
+                Promptunu Test Et
+            </button>
+        </div>
+    </section>
+
+    <div class="container">
+        <section id="guide">
+            <h2 data-tr="guide-title">📚 Prompt Yazma Rehberi</h2>
+            <p data-tr="guide-intro" style="font-size: 1.1rem; margin-bottom: 2rem;">
+                İyi bir prompt, yapay zekadan istediğiniz sonucu almanın anahtarıdır. İşte altın kurallar:
+            </p>
+            
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h3 data-tr="tip1-title">🎯 Net ve Spesifik Olun</h3>
+                    <p data-tr="tip1-desc">
+                        Belirsiz ifadeler yerine, tam olarak ne istediğinizi açıkça belirtin. "Bir şey yaz" yerine 
+                        "500 kelimelik bir blog yazısı yaz" deyin.
+                    </p>
+                </div>
+
+                <div class="tip-card">
+                    <h3 data-tr="tip2-title">📝 Bağlam Sağlayın</h3>
+                    <p data-tr="tip2-desc">
+                        AI'ya arka plan bilgisi verin. Kim için, neden, hangi amaçla istediğinizi açıklayın. 
+                        Bu, daha isabetli yanıtlar almanızı sağlar.
+                    </p>
+                </div>
+
+                <div class="tip-card">
+                    <h3 data-tr="tip3-title">💡 Örnekler Verin</h3>
+                    <p data-tr="tip3-desc">
+                        Beklediğiniz çıktı stilini göstermek için örnekler ekleyin. "Şu tarzda yaz" diyerek 
+                        bir örnek göstermek çok etkilidir.
+                    </p>
+                </div>
+
+                <div class="tip-card">
+                    <h3 data-tr="tip4-title">🎭 Rol Verin</h3>
+                    <p data-tr="tip4-desc">
+                        AI'ya bir rol atayın: "Sen bir pazarlama uzmanısın" veya "Bir İngilizce öğretmeni gibi açıkla" 
+                        gibi ifadeler çok işe yarar.
+                    </p>
+                </div>
+
+                <div class="tip-card">
+                    <h3 data-tr="tip5-title">📊 Format Belirtin</h3>
+                    <p data-tr="tip5-desc">
+                        Çıktının nasıl olmasını istediğinizi söyleyin: liste, tablo, madde madde, paragraf halinde, 
+                        JSON formatında gibi.
+                    </p>
+                </div>
+
+                <div class="tip-card">
+                    <h3 data-tr="tip6-title">🔄 Adım Adım İsteyin</h3>
+                    <p data-tr="tip6-desc">
+                        Karmaşık görevler için "adım adım açıkla" deyin. Bu, AI'nın daha organize ve detaylı 
+                        düşünmesini sağlar.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="analyzer">
+            <h2 data-tr="analyzer-title">🔍 Prompt Analiz Aracı</h2>
+            <p data-tr="analyzer-intro" style="font-size: 1.1rem; margin-bottom: 2rem;">
+                Promptunuzu aşağıya yazın, size detaylı geri bildirim ve iyileştirme önerileri sunalım!
+            </p>
+            
+            <div class="analyzer">
+                <div class="input-group">
+                    <label for="promptInput" data-tr="analyzer-label">Promptunuzu Buraya Yazın:</label>
+                    <textarea id="promptInput" placeholder="Örnek: Bana bir blog yazısı yaz..." data-tr-placeholder="analyzer-placeholder"></textarea>
+                </div>
+                <button class="analyze-btn" onclick="analyzePrompt()" data-tr="analyzer-btn">Analiz Et</button>
+
+                <div class="results" id="results">
+                    <div class="score">
+                        <div class="score-circle" id="scoreCircle">-</div>
+                        <h3 data-tr="score-title">Prompt Puanı</h3>
+                    </div>
+                    <div id="feedback"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="examples">
+            <h2 data-tr="examples-title">✨ Prompt Örnekleri</h2>
+            <p data-tr="examples-intro" style="font-size: 1.1rem; margin-bottom: 2rem;">
+                Kötü ve iyi prompt örneklerini karşılaştırarak öğrenin:
+            </p>
+
+            <div class="examples-grid">
+                <div class="example-card bad">
+                    <span class="badge bad" data-tr="badge-bad">Kötü Örnek</span>
+                    <h3 data-tr="bad-ex1-title">❌ Belirsiz ve Yetersiz</h3>
+                    <div class="example-text" data-tr="bad-ex1-text">
+                        "Bir şey yaz"
+                    </div>
+                    <p style="margin-top: 1rem;" data-tr="bad-ex1-why">
+                        <strong>Neden Kötü:</strong> Çok belirsiz, ne yazılacağı belli değil, bağlam yok.
+                    </p>
+                </div>
+
+                <div class="example-card good">
+                    <span class="badge good" data-tr="badge-good">İyi Örnek</span>
+                    <h3 data-tr="good-ex1-title">✅ Net ve Detaylı</h3>
+                    <div class="example-text" data-tr="good-ex1-text">
+                        "Küçük işletmeler için sosyal medya stratejileri hakkında 500 kelimelik bir blog yazısı yaz. 
+                        Hedef kitle: yeni başlayan girişimciler. Ton: arkadaşça ve motive edici. 3 pratik öneri içersin."
+                    </div>
+                    <p style="margin-top: 1rem;" data-tr="good-ex1-why">
+                        <strong>Neden İyi:</strong> Konu açık, hedef kitle belli, ton belirtilmiş, format ve beklenti net.
+                    </p>
+                </div>
+
+                <div class="example-card bad">
+                    <span class="badge bad" data-tr="badge-bad">Kötü Örnek</span>
+                    <h3 data-tr="bad-ex2-title">❌ Çok Genel</h3>
+                    <div class="example-text" data-tr="bad-ex2-text">
+                        "Pazarlama hakkında bilgi ver"
+                    </div>
+                    <p style="margin-top: 1rem;" data-tr="bad-ex2-why">
+                        <strong>Neden Kötü:</strong> Pazarlama çok geniş bir konu, hangi yönü istediği belirsiz.
+                    </p>
+                </div>
+
+                <div class="example-card good">
+                    <span class="badge good" data-tr="badge-good">İyi Örnek</span>
+                    <h3 data-tr="good-ex2-title">✅ Spesifik ve Yapılandırılmış</h3>
+                    <div class="example-text" data-tr="good-ex2-text">
+                        "Bir e-ticaret sitesi için e-posta pazarlama kampanyası oluştur. Hedef: sepeti terk eden 
+                        müşterileri geri kazanma. 3 farklı e-posta şablonu yaz: 1) İlk hatırlatma (24 saat sonra), 
+                        2) İndirim teklifi (48 saat sonra), 3) Son şans (72 saat sonra). Her biri 150 kelimeyi geçmesin."
+                    </div>
+                    <p style="margin-top: 1rem;" data-tr="good-ex2-why">
+                        <strong>Neden İyi:</strong> Spesifik senaryo, net hedef, yapılandırılmış çıktı, uzunluk limiti.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p data-tr="footer-text">☕ Prompt Cafe - Yapay Zeka ile Etkili İletişim © 2026</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentLang = 'tr';
+
+        const translations = {
+            tr: {
+                'nav-home': 'Ana Sayfa',
+                'nav-guide': 'Rehber',
+                'nav-analyzer': 'Analiz Et',
+                'nav-examples': 'Örnekler',
+                'hero-title': 'Yapay Zeka İle Konuşma Sanatı',
+                'hero-subtitle': 'Mükemmel promptlar yazarak AI\'dan en iyi sonuçları alın',
+                'hero-cta': 'Promptunu Test Et',
+                'guide-title': '📚 Prompt Yazma Rehberi',
+                'guide-intro': 'İyi bir prompt, yapay zekadan istediğiniz sonucu almanın anahtarıdır. İşte altın kurallar:',
+                'tip1-title': '🎯 Net ve Spesifik Olun',
+                'tip1-desc': 'Belirsiz ifadeler yerine, tam olarak ne istediğinizi açıkça belirtin. "Bir şey yaz" yerine "500 kelimelik bir blog yazısı yaz" deyin.',
+                'tip2-title': '📝 Bağlam Sağlayın',
+                'tip2-desc': 'AI\'ya arka plan bilgisi verin. Kim için, neden, hangi amaçla istediğinizi açıklayın. Bu, daha isabetli yanıtlar almanızı sağlar.',
+                'tip3-title': '💡 Örnekler Verin',
+                'tip3-desc': 'Beklediğiniz çıktı stilini göstermek için örnekler ekleyin. "Şu tarzda yaz" diyerek bir örnek göstermek çok etkilidir.',
+                'tip4-title': '🎭 Rol Verin',
+                'tip4-desc': 'AI\'ya bir rol atayın: "Sen bir pazarlama uzmanısın" veya "Bir İngilizce öğretmeni gibi açıkla" gibi ifadeler çok işe yarar.',
+                'tip5-title': '📊 Format Belirtin',
+                'tip5-desc': 'Çıktının nasıl olmasını istediğinizi söyleyin: liste, tablo, madde madde, paragraf halinde, JSON formatında gibi.',
+                'tip6-title': '🔄 Adım Adım İsteyin',
+                'tip6-desc': 'Karmaşık görevler için "adım adım açıkla" deyin. Bu, AI\'nın daha organize ve detaylı düşünmesini sağlar.',
+                'analyzer-title': '🔍 Prompt Analiz Aracı',
+                'analyzer-intro': 'Promptunuzu aşağıya yazın, size detaylı geri bildirim ve iyileştirme önerileri sunalım!',
+                'analyzer-label': 'Promptunuzu Buraya Yazın:',
+                'analyzer-placeholder': 'Örnek: Bana bir blog yazısı yaz...',
+                'analyzer-btn': 'Analiz Et',
+                'score-title': 'Prompt Puanı',
+                'examples-title': '✨ Prompt Örnekleri',
+                'examples-intro': 'Kötü ve iyi prompt örneklerini karşılaştırarak öğrenin:',
+                'badge-bad': 'Kötü Örnek',
+                'badge-good': 'İyi Örnek',
+                'bad-ex1-title': '❌ Belirsiz ve Yetersiz',
+                'bad-ex1-text': '"Bir şey yaz"',
+                'bad-ex1-why': '<strong>Neden Kötü:</strong> Çok belirsiz, ne yazılacağı belli değil, bağlam yok.',
+                'good-ex1-title': '✅ Net ve Detaylı',
+                'good-ex1-text': '"Küçük işletmeler için sosyal medya stratejileri hakkında 500 kelimelik bir blog yazısı yaz. Hedef kitle: yeni başlayan girişimciler. Ton: arkadaşça ve motive edici. 3 pratik öneri içersin."',
+                'good-ex1-why': '<strong>Neden İyi:</strong> Konu açık, hedef kitle belli, ton belirtilmiş, format ve beklenti net.',
+                'bad-ex2-title': '❌ Çok Genel',
+                'bad-ex2-text': '"Pazarlama hakkında bilgi ver"',
+                'bad-ex2-why': '<strong>Neden Kötü:</strong> Pazarlama çok geniş bir konu, hangi yönü istediği belirsiz.',
+                'good-ex2-title': '✅ Spesifik ve Yapılandırılmış',
+                'good-ex2-text': '"Bir e-ticaret sitesi için e-posta pazarlama kampanyası oluştur. Hedef: sepeti terk eden müşterileri geri kazanma. 3 farklı e-posta şablonu yaz: 1) İlk hatırlatma (24 saat sonra), 2) İndirim teklifi (48 saat sonra), 3) Son şans (72 saat sonra). Her biri 150 kelimeyi geçmesin."',
+                'good-ex2-why': '<strong>Neden İyi:</strong> Spesifik senaryo, net hedef, yapılandırılmış çıktı, uzunluk limiti.',
+                'footer-text': '☕ Prompt Cafe - Yapay Zeka ile Etkili İletişim © 2026'
+            },
+            en: {
+                'nav-home': 'Home',
+                'nav-guide': 'Guide',
+                'nav-analyzer': 'Analyzer',
+                'nav-examples': 'Examples',
+                'hero-title': 'The Art of Talking to AI',
+                'hero-subtitle': 'Get the best results from AI by writing perfect prompts',
+                'hero-cta': 'Test Your Prompt',
+                'guide-title': '📚 Prompt Writing Guide',
+                'guide-intro': 'A good prompt is the key to getting the results you want from AI. Here are the golden rules:',
+                'tip1-title': '🎯 Be Clear and Specific',
+                'tip1-desc': 'Instead of vague phrases, clearly state exactly what you want. Say "write a 500-word blog post" instead of "write something".',
+                'tip2-title': '📝 Provide Context',
+                'tip2-desc': 'Give the AI background information. Explain who it\'s for, why, and for what purpose. This ensures more accurate responses.',
+                'tip3-title': '💡 Give Examples',
+                'tip3-desc': 'Add examples to show the style of output you expect. Saying "write in this style" and showing an example is very effective.',
+                'tip4-title': '🎭 Assign a Role',
+                'tip4-desc': 'Give the AI a role: phrases like "You are a marketing expert" or "Explain like an English teacher" work very well.',
+                'tip5-title': '📊 Specify Format',
+                'tip5-desc': 'Tell how you want the output: as a list, table, bullet points, paragraphs, JSON format, etc.',
+                'tip6-title': '🔄 Ask Step-by-Step',
+                'tip6-desc': 'For complex tasks, say "explain step by step". This makes the AI think more organized and detailed.',
+                'analyzer-title': '🔍 Prompt Analyzer Tool',
+                'analyzer-intro': 'Write your prompt below and we\'ll give you detailed feedback and improvement suggestions!',
+                'analyzer-label': 'Write Your Prompt Here:',
+                'analyzer-placeholder': 'Example: Write me a blog post about...',
+                'analyzer-btn': 'Analyze',
+                'score-title': 'Prompt Score',
+                'examples-title': '✨ Prompt Examples',
+                'examples-intro': 'Learn by comparing bad and good prompt examples:',
+                'badge-bad': 'Bad Example',
+                'badge-good': 'Good Example',
+                'bad-ex1-title': '❌ Vague and Insufficient',
+                'bad-ex1-text': '"Write something"',
+                'bad-ex1-why': '<strong>Why Bad:</strong> Too vague, unclear what to write, no context.',
+                'good-ex1-title': '✅ Clear and Detailed',
+                'good-ex1-text': '"Write a 500-word blog post about social media strategies for small businesses. Target audience: new entrepreneurs. Tone: friendly and motivating. Include 3 practical tips."',
+                'good-ex1-why': '<strong>Why Good:</strong> Clear topic, defined target audience, specified tone, clear format and expectations.',
+                'bad-ex2-title': '❌ Too General',
+                'bad-ex2-text': '"Give information about marketing"',
+                'bad-ex2-why': '<strong>Why Bad:</strong> Marketing is a very broad topic, unclear which aspect is wanted.',
+                'good-ex2-title': '✅ Specific and Structured',
+                'good-ex2-text': '"Create an email marketing campaign for an e-commerce site. Goal: win back customers who abandoned their carts. Write 3 different email templates: 1) First reminder (after 24 hours), 2) Discount offer (after 48 hours), 3) Last chance (after 72 hours). Each should not exceed 150 words."',
+                'good-ex2-why': '<strong>Why Good:</strong> Specific scenario, clear goal, structured output, length limit.',
+                'footer-text': '☕ Prompt Cafe - Effective Communication with AI © 2026'
+            }
+        };
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'tr' ? 'en' : 'tr';
+            document.documentElement.lang = currentLang;
+            
+            const elements = document.querySelectorAll('[data-tr]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-tr');
+                if (translations[currentLang][key]) {
+                    if (el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[currentLang][key];
+                    } else {
+                        el.innerHTML = translations[currentLang][key];
+                    }
+                }
+            });
+
+            const placeholderEl = document.getElementById('promptInput');
+            if (placeholderEl && placeholderEl.hasAttribute('data-tr-placeholder')) {
+                const key = placeholderEl.getAttribute('data-tr-placeholder');
+                if (translations[currentLang][key]) {
+                    placeholderEl.placeholder = translations[currentLang][key];
+                }
+            }
+        }
+
+        function analyzePrompt() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            
+            if (!prompt) {
+                alert(currentLang === 'tr' ? 'Lütfen bir prompt yazın!' : 'Please write a prompt!');
+                return;
+            }
+
+            let score = 0;
+            const feedback = [];
+            const maxScore = 100;
+
+            if (prompt.length < 10) {
+                feedback.push({
+                    type: 'bad',
+                    text: currentLang === 'tr' 
+                        ? '❌ Çok kısa: Promptunuz çok kısa. Daha fazla detay ekleyin.' 
+                        : '❌ Too short: Your prompt is too short. Add more details.'
+                });
+            } else if (prompt.length < 50) {
+                score += 10;
+                feedback.push({
+                    type: 'warning',
+                    text: currentLang === 'tr' 
+                        ? '⚠️ Kısa: Daha fazla detay ekleyerek promptunuzu güçlendirebilirsiniz.' 
+                        : '⚠️ Short: You can strengthen your prompt by adding more details.'
+                });
+            } else {
+                score += 25;
+                feedback.push({
+                    type: 'good',
+                    text: currentLang === 'tr' 
+                        ? '✅ Uzunluk: Prompt yeterli uzunlukta.' 
+                        : '✅ Length: Prompt is sufficiently long.'
+                });
+            }
+
+            const contextKeywords = currentLang === 'tr' 
+                ? ['için', 'hedef', 'kitle', 'amaç', 'çünkü', 'nedeni', 'bağlam', 'durum']
+                : ['for', 'target', 'audience', 'purpose', 'because', 'reason', 'context', 'situation'];
+            
+            const hasContext = contextKeywords.some(keyword => prompt.toLowerCase().includes(keyword));
+            if (hasContext) {
+                score += 20;
+                feedback.push({
+                    type: 'good',
+                    text: currentLang === 'tr' 
+                        ? '✅ Bağlam: Promptunuz bağlam bilgisi içeriyor.' 
+                        : '✅ Context: Your prompt includes context information.'
+                });
+            } else {
+                feedback.push({
+                    type: 'warning',
+                    text: currentLang === 'tr' 
+                        ? '⚠️ Bağlam: Kim için, neden istediğinizi belirtin.' 
+                        : '⚠️ Context: Specify who it\'s for and why you want it.'
+                });
+            }
+
+            const roleKeywords = currentLang === 'tr' 
+                ? ['sen bir', 'rolün', 'gibi', 'uzman', 'öğretmen', 'danışman']
+                : ['you are', 'act as', 'like a', 'expert', 'teacher', 'consultant'];
+            
+            const hasRole = roleKeywords.some(keyword => prompt.toLowerCase().includes(keyword));
+            if (hasRole) {
+                score += 15;
+                feedback.push({
+                    type: 'good',
+                    text: currentLang === 'tr' 
+                        ? '✅ Rol: AI\'ya bir rol vermişsiniz.' 
+                        : '✅ Role: You\'ve assigned a role to the AI.'
+                });
+            } else {
+                feedback.push({
+                    type: 'warning',
+                    text: currentLang === 'tr' 
+                        ? '⚠️ Rol: AI\'ya bir rol atayarak daha iyi sonuçlar alabilirsiniz.' 
+                        : '⚠️ Role: You can get better results by assigning a role to the AI.'
+                });
+            }
+
+            const formatKeywords = currentLang === 'tr' 
+                ? ['liste', 'tablo', 'madde', 'paragraf', 'format', 'şablon', 'örnek', 'adım']
+                : ['list', 'table', 'bullet', 'paragraph', 'format', 'template', 'example', 'step'];
+            
+            const hasFormat = formatKeywords.some(keyword => prompt.toLowerCase().includes(keyword));
+            if (hasFormat) {
+                score += 15;
+                feedback.push({
+                    type: 'good',
+                    text: currentLang === 'tr' 
+                        ? '✅ Format: Çıktı formatını belirtmişsiniz.' 
+                        : '✅ Format: You\'ve specified the output format.'
+                });
+            } else {
+                feedback.push({
+                    type: 'warning',
+                    text: currentLang === 'tr' 
+                        ? '⚠️ Format: Çıktının nasıl olmasını istediğinizi belirtin.' 
+                        : '⚠️ Format: Specify how you want the output to be.'
+                });
+            }
+
+            const hasNumbers = /\d+/.test(prompt);
+            if (hasNumbers) {
+                score += 15;
+                feedback.push({
+                    type: 'good',
+                    text: currentLang === 'tr' 
+                        ? '✅ Spesifik: Sayısal değerler kullanarak spesifik olmuşsunuz.' 
+                        : '✅ Specific: You\'ve been specific by using numerical values.'
+                });
+            } else {
+                feedback.push({
+                    type: 'warning',
+                    text: currentLang === 'tr' 
+                        ? '⚠️ Spesifiklik: Kelime sayısı, madde sayısı gibi sayısal değerler ekleyin.' 
+                        : '⚠️ Specificity: Add numerical values like word count, number of items.'
+                });
+            }
+
+            const hasExample = currentLang === 'tr' 
+                ? prompt.toLowerCase().includes('örnek') || prompt.toLowerCase().includes('gibi')
+                : prompt.toLowerCase().includes('example') || prompt.toLowerCase().includes('like');
+            
+            if (hasExample) {
+                score += 10;
+                feedback.push({
+                    type: 'good',
+                    text: currentLang === 'tr' 
+                        ? '✅ Örnek: Örnek veya referans vermişsiniz.' 
+                        : '✅ Example: You\'ve provided an example or reference.'
+                });
+            }
+
+            const vaguePhrases = currentLang === 'tr' 
+                ? ['bir şey', 'birkaç', 'biraz', 'hakkında bilgi']
+                : ['something', 'some', 'a bit', 'information about'];
+            
+            const hasVague = vaguePhrases.some(phrase => prompt.toLowerCase().includes(phrase));
+            if (hasVague) {
+                score -= 15;
+                feedback.push({
+                    type: 'bad',
+                    text: currentLang === 'tr' 
+                        ? '❌ Belirsiz İfadeler: "Bir şey", "biraz" gibi belirsiz ifadelerden kaçının.' 
+                        : '❌ Vague Phrases: Avoid vague phrases like "something", "a bit".'
+                });
+            }
+
+            score = Math.max(0, Math.min(100, score));
+
+            document.getElementById('scoreCircle').textContent = score;
+            
+            let feedbackHTML = '';
+            feedback.forEach(item => {
+                feedbackHTML += `<div class="feedback-item ${item.type}">${item.text}</div>`;
+            });
+
+            if (score >= 80) {
+                feedbackHTML += `<div class="feedback-item good">
+                    ${currentLang === 'tr' 
+                        ? '🎉 <strong>Harika!</strong> Promptunuz çok iyi yapılandırılmış.' 
+                        : '🎉 <strong>Excellent!</strong> Your prompt is very well structured.'}
+                </div>`;
+            } else if (score >= 60) {
+                feedbackHTML += `<div class="feedback-item warning">
+                    ${currentLang === 'tr' 
+                        ? '👍 <strong>İyi!</strong> Yukarıdaki önerileri uygulayarak daha da geliştirebilirsiniz.' 
+                        : '👍 <strong>Good!</strong> You can improve further by applying the suggestions above.'}
+                </div>`;
+            } else {
+                feedbackHTML += `<div class="feedback-item bad">
+                    ${currentLang === 'tr' 
+                        ? '💪 <strong>Geliştirilmeli:</strong> Rehber bölümüne göz atın ve örnekleri inceleyin.' 
+                        : '💪 <strong>Needs Improvement:</strong> Check the guide section and review the examples.'}
+                </div>`;
+            }
+
+            document.getElementById('feedback').innerHTML = feedbackHTML;
+            document.getElementById('results').classList.add('show');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
